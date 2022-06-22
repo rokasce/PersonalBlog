@@ -1,0 +1,15 @@
+.author {
+    display: flex;
+    flex-direction: row;
+}
+
+.author__image {
+    width: 50px;
+    height: auto;
+}
+
+.author__info {
+    display: flex;
+    flex-direction: column;
+    color: var(--steel-blue);
+}

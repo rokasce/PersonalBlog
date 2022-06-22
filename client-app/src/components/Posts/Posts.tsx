@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Author } from "../author/Author";
 
 interface Post {
   id: string;
@@ -18,7 +19,15 @@ export const Posts = () => {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        maxWidth: 768,
+        display: "flex",
+        flexDirection: "column",
+        margin: "auto",
+      }}
+    >
+      <Author />
       {posts.map((post) => (
         <div key={post.id}>{post.title}</div>
       ))}
