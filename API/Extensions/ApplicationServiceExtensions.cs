@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Application.Core;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
@@ -43,6 +44,7 @@ public static class ApplicationServiceExtensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")!);
         });
         services.AddMediatR(typeof(Application.Posts.List).Assembly);
+        services.AddAutoMapper(typeof(MappingProfiles).Assembly);
         services.AddCors(opt =>
         {
             opt.AddPolicy("CorsPolicy", policy =>
