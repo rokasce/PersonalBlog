@@ -1,14 +1,17 @@
-import React from "react";
-import logo from "../../logo.svg";
 import styles from "./Author.module.css";
+import authorImage from "./author.jpg";
 
 export const Author = () => {
   return (
     <div className={styles.author}>
-      <img className={styles.author__image} src={logo} alt="logo" />
+      <img className={styles.author__image} src={authorImage} alt="logo" />
       <div className={styles.author__info}>
-        <span className="author__name">Rokas Cesnulevicius</span>
-        <span className="author__description">Cheesy description</span>
+        <span className={styles.author__name}>
+          Personal blog by Rokas Cesnulevicius
+        </span>
+        <span className={styles.author__description}>
+          Full-stack .NET developer
+        </span>
       </div>
     </div>
   );

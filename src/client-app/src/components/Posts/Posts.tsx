@@ -1,13 +1,8 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Author } from "../author/Author";
-
-interface Post {
-  id: string;
-  title: string;
-  content: string;
-  date: string;
-}
+import { Post } from "../../models/Post";
+import { PostListItem } from "./Post/PostListItem";
+import styles from "./Posts.module.css";
 
 export const Posts = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -19,17 +14,9 @@ export const Posts = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        maxWidth: 768,
-        display: "flex",
-        flexDirection: "column",
-        margin: "auto",
-      }}
-    >
-      <Author />
+    <div className={styles.posts}>
       {posts.map((post) => (
-        <div key={post.id}>{post.title}</div>
+        <PostListItem key={post.id} post={post} />
       ))}
     </div>
   );
