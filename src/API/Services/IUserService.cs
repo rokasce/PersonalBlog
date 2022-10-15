@@ -1,4 +1,4 @@
-﻿using Domain;
+﻿using Domain.Common;
 
 namespace API.Services;
 

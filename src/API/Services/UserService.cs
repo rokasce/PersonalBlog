@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using API.Options;
 using Domain;
+using Domain.Common;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
