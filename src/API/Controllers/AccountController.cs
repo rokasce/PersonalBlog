@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.DTOs.Responses;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -71,5 +72,22 @@ public class AccountController: ControllerBase
             Token = authResponse.Token,
             RefreshToken = authResponse.RefreshToken
         });
+    }
+
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Delete([FromRoute] Guid id) 
+    {
+        var deleteResponse = await _userService.DeleteUserById(id);
+        if (!deleteResponse) return BadRequest($"Could not delete user with ID: {id}");
+
+        return Ok(deleteResponse);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task GetPagedAsync() 
+    {
+    
     }
 }

@@ -15,13 +15,15 @@ public static class IdentityServiceExtensions
     {
         services.AddIdentityCore<User>(options =>
         {
-           // A place to configure user passwords, etc... 
-        }).AddEntityFrameworkStores<DataContext>()
+            // A place to configure user passwords, etc... 
+        }).AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<DataContext>()
             .AddSignInManager<SignInManager<User>>();
 
         var jwtSettings = new JwtSettings();
         configuration.Bind(nameof(jwtSettings), jwtSettings);
         services.AddSingleton(jwtSettings);
+        services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserService, UserService>();
       
         var tokenValidationParameters =  new TokenValidationParameters

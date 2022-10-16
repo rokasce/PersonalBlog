@@ -20,9 +20,9 @@ services:
     container_name: db-server
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Test1234
-      - MSSQL_TCP_PORT=1433
+      - MSSQL_SA_PASSWORD=Test1234!.Rokas
+      - MSSQL_PID=Express
     ports:
-      - "1400:1433"
+      - "1433:1433"
     networks:
       - localdev

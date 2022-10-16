@@ -7,11 +7,16 @@ namespace Persistence;
 
 public class DataContext: IdentityDbContext<User>
 {
-    public DataContext(DbContextOptions options): base(options)
+    public DataContext(DbContextOptions options) : base(options)
     {
         
     }
     
     public DbSet<Post> Posts { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+    }
 }

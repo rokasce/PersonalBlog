@@ -29,10 +29,20 @@ public class Seed
             }
          };
          
-         foreach (var user in users)
+         foreach (var u in users.Select((user, index) => (user, index)))
          {
-            await userManager.CreateAsync(user, "Test1234!");
+            await userManager.CreateAsync(u.user, "Test1234!");
+
+            if (u.index % 2 == 0) 
+            {
+                await userManager.AddToRoleAsync(u.user, "Admin");
+            } else 
+            {
+                await userManager.AddToRoleAsync(u.user, "User");
+            }
          }
+
+            var createdUser = await userManager.FindByEmailAsync("jane@test.com");
       }
 
       if (context.Posts.Any()) return;

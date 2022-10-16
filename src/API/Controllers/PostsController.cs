@@ -1,4 +1,6 @@
 ﻿using API.Cache;
+using API.DTOs.Requests.Queries;
+using API.DTOs.Responses;
 using API.Extensions;
 using Application.Posts;
 using Domain;
@@ -13,16 +15,21 @@ public class PostsController: BaseApiController
 {
     [HttpGet]
     [Cached(600)]
-    public async Task<ActionResult<List<Post>>> GetPosts()
+    public async Task<ActionResult<IActionResult>> GetPosts([FromQuery]PaginationQuery paginationQuery)
     {
-        return await Mediator.Send(new List.Query());
+        var posts = await Mediator.Send(new List.Query());
+
+        return Ok(new Response<List<Post>>(posts));
     }
     
     [HttpGet("{id:guid}")]
     [Cached(600)]
     public async Task<ActionResult<Post>> GetPost(Guid id)
     {
-        return await Mediator.Send(new Details.Query { Id = id });
+        var post = await Mediator.Send(new Details.Query { Id = id });
+
+
+        return Ok(new Response<Post>(post));
     }
 
     [HttpPost]

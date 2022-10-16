@@ -1,34 +1,26 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using API.Options;
-using Domain;
+﻿using Domain;
 using Domain.Common;
 using Domain.Entities;
+using Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Persistence;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace API.Services;
 
 public class UserService: IUserService
 {
     private readonly UserManager<User> _userManager;
-    private readonly SignInManager<User> _signInManager;
-    private readonly JwtSettings _jwtSettings;
-    private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly DataContext _dataContext;
+    private readonly ITokenService _tokenService;
 
-    public UserService(UserManager<User> userManager, SignInManager<User> signInManager, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters, DataContext dataContext)
+    public UserService(UserManager<User> userManager, DataContext dataContext, ITokenService tokenService)
     {
         _userManager = userManager;
-        _signInManager = signInManager;
-        _jwtSettings = jwtSettings;
-        _tokenValidationParameters = tokenValidationParameters;
         _dataContext = dataContext;
+        _tokenService = tokenService;
     }
-    
+
     public async Task<AuthenticationResult> RegisterAsync(string email, string password)
     {
         var existingUser = await _userManager.FindByEmailAsync(email);
@@ -84,8 +76,7 @@ public class UserService: IUserService
 
     public async Task<AuthenticationResult> RefreshAsync(string token, string refreshToken)
     {
-        var validatedToken = GetPrincipalFromToken(token);
-
+        var validatedToken = _tokenService.GetPrincipalFromToken(token);
         if (validatedToken == null)
         {
             return new AuthenticationResult
@@ -142,49 +133,10 @@ public class UserService: IUserService
         return await GenerateAuthenticationResultAsync(user);
     }
 
-    private ClaimsPrincipal GetPrincipalFromToken(string token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-
-        try
-        {
-            var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters, out var validatedToken);
-            if (!IsJwtWithValidSecurityAlgorithm(validatedToken))
-            {
-                return null;
-            }
-
-            return principal;
-        }
-        catch (Exception e)
-        {
-            return null;
-        }
-    }
-
-    private bool IsJwtWithValidSecurityAlgorithm(SecurityToken validatedToken)
-    {
-        return (validatedToken is JwtSecurityToken jwtSecurityToken) && jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCulture);
-    }
-
     private async Task<AuthenticationResult> GenerateAuthenticationResultAsync(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_jwtSettings.Secret);
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("id", user.Id),
-            }),
-            Expires = DateTime.UtcNow.Add(_jwtSettings.TokenLifeTime),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var token = await _tokenService.GenerateTokenAsync(user);
         var refreshToken = new RefreshToken
         {
             JwtId = token.Id,
@@ -202,5 +154,24 @@ public class UserService: IUserService
             Token = tokenHandler.WriteToken(token),
             RefreshToken = refreshToken.Token
         };
+    }
+
+    public async Task<bool> DeleteUserById(Guid id)
+    {
+        var user = await _userManager.FindByIdAsync(id.ToString());
+        if(user == null) return false;
+
+        var result = await _userManager.DeleteAsync(user);
+
+        if (result.Succeeded) return true;
+
+        return false;
+    }
+
+    public async Task<List<User>> GetPagedUsersAsync() 
+    {
+        var users = await _userManager.Users.ToListAsync();
+
+        return users;
     }
 }
