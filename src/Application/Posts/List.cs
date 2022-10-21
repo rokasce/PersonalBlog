@@ -7,9 +7,9 @@ namespace Application.Posts;
 
 public class List
 {
-    public class Query : IRequest<List<Post>> { }
+    public class Query : IRequest<IEnumerable<Post>> { }
 
-    public class Handler : IRequestHandler<Query, List<Post>>
+    public class Handler : IRequestHandler<Query,IEnumerable<Post>>
     {
         private readonly DataContext _context;
         
@@ -18,7 +18,7 @@ public class List
             _context = context;
         }
 
-        public async Task<List<Post>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<Post>> Handle(Query request, CancellationToken cancellationToken)
         {
             return await _context.Posts.ToListAsync(cancellationToken: cancellationToken);
         }

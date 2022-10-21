@@ -19,7 +19,7 @@ public class PostsController: BaseApiController
     {
         var posts = await Mediator.Send(new List.Query());
 
-        return Ok(new Response<List<Post>>(posts));
+        return Ok(new PaginatedResponse<Post>(posts));
     }
     
     [HttpGet("{id:guid}")]

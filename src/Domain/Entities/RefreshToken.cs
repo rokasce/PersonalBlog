@@ -15,6 +15,7 @@ public class RefreshToken
     public bool Used { get; set; } 
     public bool Invalidated { get; set; }
     public string UserId { get; set; }
+
     [ForeignKey(nameof(UserId))]
     public User User { get; set; }
 }
