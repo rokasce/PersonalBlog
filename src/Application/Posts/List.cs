@@ -1,15 +1,24 @@
-﻿using Domain;
+﻿using Application.Core;
+using Application.Core.Queries;
+using Domain;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Posts;
 
 public class List
 {
-    public class Query : IRequest<IEnumerable<Post>> { }
+    public class Query : IRequest<Result<PagedList<Post>>> 
+    {
+        public PaginationQuery? PaginationQuery { get; init; }
 
-    public class Handler : IRequestHandler<Query,IEnumerable<Post>>
+        public Query(PaginationQuery? paginationQuery)
+        {
+            PaginationQuery = paginationQuery;
+        }
+    }
+
+    public class Handler : IRequestHandler<Query, Result<PagedList<Post>>>
     {
         private readonly DataContext _context;
         
@@ -18,9 +27,13 @@ public class List
             _context = context;
         }
 
-        public async Task<IEnumerable<Post>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<PagedList<Post>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            return await _context.Posts.ToListAsync(cancellationToken: cancellationToken);
+
+            var query = _context.Posts.OrderBy(x => x.Date).AsQueryable();
+
+            return Result<PagedList<Post>>.Success(await PagedList<Post>.CreateAsync(query,
+                request.PaginationQuery.PageNumber, request.PaginationQuery.PageSize));
         }
     }
 }

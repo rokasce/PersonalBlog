@@ -1,7 +1,7 @@
 ﻿using API.Cache;
-using API.DTOs.Requests.Queries;
-using API.DTOs.Responses;
 using API.Extensions;
+using Application.Core;
+using Application.Core.Queries;
 using Application.Posts;
 using Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,21 +15,20 @@ public class PostsController: BaseApiController
 {
     [HttpGet]
     [Cached(600)]
-    public async Task<ActionResult<IActionResult>> GetPosts([FromQuery]PaginationQuery paginationQuery)
+    public async Task<IActionResult> GetPosts([FromQuery]PaginationQuery paginationQuery)
     {
-        var posts = await Mediator.Send(new List.Query());
+        var posts = await Mediator.Send(new List.Query(paginationQuery));
 
-        return Ok(new PaginatedResponse<Post>(posts));
+        return HandlePagedResult<Post>(posts);
     }
     
     [HttpGet("{id:guid}")]
     [Cached(600)]
-    public async Task<ActionResult<Post>> GetPost(Guid id)
+    public async Task<IActionResult> GetPost(Guid id)
     {
         var post = await Mediator.Send(new Details.Query { Id = id });
 
-
-        return Ok(new Response<Post>(post));
+        return HandleResult(post);
     }
 
     [HttpPost]

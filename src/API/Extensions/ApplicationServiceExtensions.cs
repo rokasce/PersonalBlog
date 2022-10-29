@@ -1,8 +1,12 @@
 ﻿using Application.Core;
+using Application.Posts;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using static Application.Posts.Create;
 
 namespace API.Extensions;
 
@@ -11,6 +15,7 @@ public static class ApplicationServiceExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddControllers();
+        services.AddValidatorsFromAssemblyContaining<CommandValidator>();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(x =>
         {
