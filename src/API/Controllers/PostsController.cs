@@ -1,6 +1,5 @@
 ﻿using API.Cache;
 using API.Extensions;
-using Application.Core;
 using Application.Core.Queries;
 using Application.Posts;
 using Domain;
@@ -35,19 +34,19 @@ public class PostsController: BaseApiController
     public async Task<IActionResult> CreatePost([FromBody]Post post)
     {
         post.UserId = HttpContext.GetUserId();
-        return Ok(await Mediator.Send(new Create.Command { Post = post }));
+        return HandleResult(await Mediator.Send(new Create.Command { Post = post }));
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> EditPost(Guid id, [FromBody]Post post)
     {
         post.Id = id;
-        return Ok(await Mediator.Send(new Edit.Command { Post = post }));
+        return HandleResult(await Mediator.Send(new Edit.Command { Post = post }));
     }
     
     [HttpDelete]
     public async Task<IActionResult> DeletePost(Guid id)
     {
-        return Ok(await Mediator.Send(new Delete.Command { Id = id }));
+        return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
     }
 }

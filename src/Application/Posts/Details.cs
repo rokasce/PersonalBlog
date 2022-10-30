@@ -20,7 +20,7 @@ public class Details
         {
             _context = context;
         }
-        
+
         public async Task<Result<Post>> Handle(Query request, CancellationToken cancellationToken)
         {
             var post = await _context.Posts.FindAsync(request.Id);
