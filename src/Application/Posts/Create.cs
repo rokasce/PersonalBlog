@@ -25,9 +25,9 @@ public class Create
     {
         private readonly DataContext _context;
 
-        public Handler(DataContext _context)
+        public Handler(DataContext context)
         {
-            this._context = _context;
+            _context = context;
         }
         
         public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)

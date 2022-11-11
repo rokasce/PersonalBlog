@@ -18,7 +18,7 @@ public class PostsController: BaseApiController
     {
         var posts = await Mediator.Send(new List.Query(paginationQuery));
 
-        return HandlePagedResult<Post>(posts);
+        return HandlePagedResult<PostDto>(posts);
     }
     
     [HttpGet("{id:guid}")]
@@ -31,7 +31,7 @@ public class PostsController: BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePost([FromBody]Post post)
+    public async Task<IActionResult> CreatePost([FromBody] Post post)
     {
         post.UserId = HttpContext.GetUserId();
         return HandleResult(await Mediator.Send(new Create.Command { Post = post }));
