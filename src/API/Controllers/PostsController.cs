@@ -2,6 +2,7 @@
 using API.Extensions;
 using Application.Core.Queries;
 using Application.Posts;
+using AutoMapper;
 using Domain;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -31,19 +32,26 @@ public class PostsController: BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePost([FromBody] Post post)
+    public async Task<IActionResult> CreatePost([FromBody] PostDto post)
     {
-        post.UserId = HttpContext.GetUserId();
-        return HandleResult(await Mediator.Send(new Create.Command { Post = post }));
+        var postToCreate = Mapper.Map<Post>(post);
+        postToCreate.UserId = HttpContext.GetUserId();
+
+        return HandleResult(await Mediator.Send(new Create.Command { Post = postToCreate }));
     }
 
+    [Authorize(Policy = "IsPostAuthor")]
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> EditPost(Guid id, [FromBody]Post post)
+    public async Task<IActionResult> EditPost(Guid id, [FromBody]PostDto post)
     {
-        post.Id = id;
-        return HandleResult(await Mediator.Send(new Edit.Command { Post = post }));
+        var postToEdit = Mapper.Map<Post>(post);
+        postToEdit.UserId = HttpContext.GetUserId();
+        postToEdit.Id = id;
+
+        return HandleResult(await Mediator.Send(new Edit.Command { Post = postToEdit }));
     }
     
+    [Authorize(Policy = "IsPostAuthor")]
     [HttpDelete]
     public async Task<IActionResult> DeletePost(Guid id)
     {

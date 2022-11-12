@@ -1,8 +1,10 @@
 ﻿using System.Text;
 using API.Options;
+using API.Requirements;
 using API.Services;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
@@ -25,8 +27,8 @@ public static class IdentityServiceExtensions
         services.AddSingleton(jwtSettings);
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUserService, UserService>();
-      
-        var tokenValidationParameters =  new TokenValidationParameters
+
+        var tokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSettings.Secret)),
@@ -37,7 +39,7 @@ public static class IdentityServiceExtensions
         };
 
         services.AddSingleton(tokenValidationParameters);
-        
+
         services.AddAuthentication(x =>
         {
             x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -48,6 +50,15 @@ public static class IdentityServiceExtensions
             x.SaveToken = true;
             x.TokenValidationParameters = tokenValidationParameters;
         });
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("IsPostAuthor", policy => 
+            { 
+                policy.Requirements.Add(new IsAuthorRequirement()); 
+            });
+        });
+        services.AddTransient<IAuthorizationHandler, IsAuthorRequirementHandler>();
 
         return services;
     }

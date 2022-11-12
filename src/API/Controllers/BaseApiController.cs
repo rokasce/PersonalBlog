@@ -1,5 +1,6 @@
 using API.Extensions;
 using Application.Core;
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +13,10 @@ public class BaseApiController : ControllerBase
     private IMediator? _mediator;
     protected IMediator Mediator => _mediator 
         ??= HttpContext.RequestServices.GetService<IMediator>()!;
+
+    private IMapper _mapper;
+    protected IMapper Mapper => _mapper 
+        ??= HttpContext.RequestServices.GetService<IMapper>()!;
 
 
     protected ActionResult HandleResult<T>(Result<T> result)

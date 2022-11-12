@@ -10,6 +10,7 @@ namespace Application.Core
         public MappingProfiles()
         {
             CreateMap<Post, Post>();
+            CreateMap<PostDto, Post>();
             CreateMap<Post, PostDto>()
                 .ForMember(d => d.Author, o => o.MapFrom(s => s.User));
 
