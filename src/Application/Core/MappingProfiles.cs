@@ -1,4 +1,5 @@
-﻿using Application.Posts;
+﻿using Application.Comments;
+using Application.Posts;
 using AutoMapper;
 using Domain;
 using Domain.Entities;
@@ -17,6 +18,10 @@ namespace Application.Core
             CreateMap<User, Profiles.Profile>()
                 .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.Email))
                 .ForMember(d => d.Username, o => o.MapFrom(s => s.Email));
+
+            CreateMap<Comment, CommentDto>()
+                .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.Author.Email))
+                .ForMember(d => d.Username, o => o.MapFrom(s => s.Author.Email));
         }
     }
 }
