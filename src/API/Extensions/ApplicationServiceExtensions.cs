@@ -1,7 +1,5 @@
 ﻿using Application.Core;
-using Application.Posts;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;

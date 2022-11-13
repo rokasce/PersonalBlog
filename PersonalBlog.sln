@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "src\Domain\Domain
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "src\Persistence\Persistence.csproj", "{7267F72C-5FF8-45A6-A0BA-CDF4A2000618}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Tests.Unit", "tests\API.UnitTests\API.Tests.Unit.csproj", "{5C4946CA-A31C-4555-965B-65AE172603BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API.Tests.Integration", "tests\API.UnitTests\API.Tests.Integration.csproj", "{5C4946CA-A31C-4555-965B-65AE172603BE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F62E2151-990C-457B-8D94-21F28F4CB4C0}"
 	ProjectSection(SolutionItems) = preProject
