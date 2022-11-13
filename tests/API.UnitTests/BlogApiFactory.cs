@@ -17,9 +17,10 @@ public class BlogApiFactory : WebApplicationFactory<IApiMarker>, IAsyncLifetime
         new TestcontainersBuilder<MsSqlTestcontainer>()
             .WithDatabase(new MsSqlTestcontainerConfiguration
             {
-                Password = "cashmeoutside"
+                Password = "cashmeoutside420BlazeItHopeItsGoodEnough..."
             })
             .WithImage("mcr.microsoft.com/mssql/server:2019-latest")
+            .WithCleanUp(true)
             .Build();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)

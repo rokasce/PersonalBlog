@@ -5,7 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = Directory.GetCurrentDirectory()
+});
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -19,6 +23,8 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
+    await context.Database.MigrateAsync();
+
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     if (!roleManager.RoleExistsAsync("Admin").Result) 
     {
@@ -32,9 +38,8 @@ try
         _ = roleManager.CreateAsync(userRole);
     }
 
-    var userManager = services.GetRequiredService<UserManager<User>>();
-    await context.Database.MigrateAsync();
-    await Seed.SeedData(context, userManager);
+    // var userManager = services.GetRequiredService<UserManager<User>>();
+    // await Seed.SeedData(context, userManager);
 }
 catch (Exception e)
 {
