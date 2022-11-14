@@ -83,11 +83,4 @@ public class AccountController: ControllerBase
 
         return Ok(deleteResponse);
     }
-
-    [HttpGet]
-    [Authorize(Roles = "Admin")]
-    public async Task GetPagedAsync() 
-    {
-    
-    }
 }
