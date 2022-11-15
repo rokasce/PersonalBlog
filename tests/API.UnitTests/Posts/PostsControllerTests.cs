@@ -38,7 +38,6 @@ public class PostsControllerTests : IClassFixture<BlogApiFactory>
 
         var registrationResponse = await registerUserRequest.Content.ReadFromJsonAsync<AuthSuccessResponse>();
 
-
         _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", registrationResponse?.Token);
         var createPostRequest = await _httpClient.PostAsJsonAsync("/api/posts", postDto);
 
