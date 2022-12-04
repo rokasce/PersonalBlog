@@ -16,6 +16,15 @@ builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddCacheServices(builder.Configuration);
 
+builder.Services.AddCors(options => 
+{
+    options.AddPolicy("CorsPolicy",  policy => policy
+        .WithOrigins("http://localhost:3000")
+        .AllowCredentials()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
+});
+
 var app = builder.Build();
 using var scope = app.Services.CreateScope();
 

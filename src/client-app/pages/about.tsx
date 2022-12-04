@@ -1,12 +1,11 @@
 import Head from 'next/head';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { NavBar } from '../components/nav-bar';
-import AppContext from '../context/AppContext';
+import ApplicationContext from '../context/AppContext';
 import styles from '../styles/Home.module.css';
 
-export default function Home() {
-  const user = useContext(AppContext);
-
+const About = () => {
+  const user = useContext(ApplicationContext);
   return (
     <div className={styles.container}>
       <Head>
@@ -18,10 +17,12 @@ export default function Home() {
       <NavBar />
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Home</h1>
+        <h1 className={styles.title}>About</h1>
 
         <p className={styles.description}>User token: {user.token}</p>
       </main>
     </div>
   );
-}
+};
+
+export default About;

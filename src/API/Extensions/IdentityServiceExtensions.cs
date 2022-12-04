@@ -23,7 +23,6 @@ public static class IdentityServiceExtensions
             options.Password.RequireDigit = true;
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequiredLength = 6;
-            // A place to configure user passwords, etc... 
         }).AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<DataContext>()
             .AddSignInManager<SignInManager<User>>();

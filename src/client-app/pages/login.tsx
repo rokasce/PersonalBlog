@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import styles from '../styles/Home.module.css';
 import { LoginForm } from '../components/login-form';
+import { NavBar } from '../components/nav-bar';
 
 export default function Login() {
   return (
@@ -12,24 +13,13 @@ export default function Login() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
+      <NavBar />
+
       <main className={styles.main}>
         <h1 className={styles.title}>Login</h1>
 
         <LoginForm />
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href='https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app'
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src='/vercel.svg' alt='Vercel Logo' width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   );
 }

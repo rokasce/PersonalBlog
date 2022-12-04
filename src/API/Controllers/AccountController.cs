@@ -29,11 +29,14 @@ public class AccountController: ControllerBase
             });
         }
 
+        // TODO: Add domain and path later for extra security 'Lenny Face'
+        // TODO: Change cookie name afterwards
+        Response.Cookies.Append("refreshToken", authResponse.RefreshToken, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.None });
+
         return Ok(new AuthSuccessResponse
         {
             Token = authResponse.Token,
-            RefreshToken = authResponse.RefreshToken
-        }); 
+        });; 
     }
 
     [HttpPost("register")]
@@ -51,14 +54,18 @@ public class AccountController: ControllerBase
         return Ok(new AuthSuccessResponse
         {
             Token = authResponse.Token,
-            RefreshToken = authResponse.RefreshToken
         });
     }
     
     [HttpPost("refresh")]
-    public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
+    public async Task<IActionResult> Refresh()
     {
-        var authResponse = await _userService.RefreshAsync(request.Token, request.RefreshToken);
+        // Move token name to constants or somewhere close to that
+        KeyValuePair<string, string>? refreshToken = Request.Cookies.FirstOrDefault(x => x.Key == "refreshToken");
+        if (refreshToken == null)
+            return BadRequest(new AuthFailedResponse { Errors = new string[] { "Refresh token is not present" } });
+
+        var authResponse = await _userService.RefreshAsync(refreshToken.Value.Value.ToString());
         if (!authResponse.Success)
         {
             return BadRequest(new AuthFailedResponse
@@ -67,10 +74,11 @@ public class AccountController: ControllerBase
             });
         }
 
+        Response.Cookies.Append("refreshToken", authResponse.RefreshToken, new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.None });
+
         return Ok(new AuthSuccessResponse
         {
             Token = authResponse.Token,
-            RefreshToken = authResponse.RefreshToken
         });
     }
 

@@ -52,7 +52,6 @@ public class UserService: IUserService
 
     public async Task<AuthenticationResult> LoginAsync(string email, string password)
     {
-        // TODO: Make messages so it wont give info what wrong happened
         var user = await _userManager.FindByEmailAsync(email);
         if (user == null)
         {
@@ -74,9 +73,9 @@ public class UserService: IUserService
         return await GenerateAuthenticationResultAsync(user);
     }
 
-    public async Task<AuthenticationResult> RefreshAsync(string token, string refreshToken)
+    public async Task<AuthenticationResult> RefreshAsync(string refreshToken)
     {
-        var validatedToken = _tokenService.GetPrincipalFromToken(token);
+/*        var validatedToken = _tokenService.GetPrincipalFromToken(token);
         if (validatedToken == null)
         {
             return new AuthenticationResult
@@ -93,9 +92,11 @@ public class UserService: IUserService
             {
                 Errors = new [] { "This token hasn't expired yet." }
             };
-        }
+        }*/
 
-        var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+
+
+        //var jti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
         var storedRefreshedToken = await _dataContext.RefreshTokens.SingleOrDefaultAsync(x => x.Token == refreshToken);
         if (storedRefreshedToken == null)
         {
@@ -120,16 +121,17 @@ public class UserService: IUserService
             return new AuthenticationResult { Errors = new []{ "This refresh token has been used" }};
         }
         
-        if (storedRefreshedToken.JwtId != jti)
+/*        if (storedRefreshedToken.JwtId != jti)
         {
             return new AuthenticationResult { Errors = new []{ "This refresh token does not match this JWT" }};
-        }
+        }*/
 
         storedRefreshedToken.Used = true;
         _dataContext.RefreshTokens.Update(storedRefreshedToken);
         await _dataContext.SaveChangesAsync();
 
-        var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
+        var user = await _userManager.FindByIdAsync(storedRefreshedToken.UserId);
+        // var user = await _userManager.FindByIdAsync(validatedToken.Claims.Single(x => x.Type == "id").Value);
         return await GenerateAuthenticationResultAsync(user);
     }
 
@@ -142,7 +144,7 @@ public class UserService: IUserService
             JwtId = token.Id,
             UserId = user.Id,
             CreationDate = DateTime.UtcNow,
-            ExpiryDate = DateTime.UtcNow.AddMonths(6)
+            ExpiryDate = DateTime.UtcNow.AddDays(7)
         };
 
         await _dataContext.RefreshTokens.AddAsync(refreshToken);
